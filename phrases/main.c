@@ -48,7 +48,7 @@ void print_phrases(const char* file_path, bool list) {
 
             phrase = realloc(phrase, sizeof(char) * ++phrase_length + 1); // + 1 to account for the eventual \0
 
-            if (!phrase) { // error while trying to allocate more memory
+            if (phrase == NULL) { // error while trying to allocate more memory
                 puts("error while trying to allocate more memory");
                 exit(EXIT_FAILURE);
             }
@@ -58,6 +58,8 @@ void print_phrases(const char* file_path, bool list) {
             phrase[phrase_length - 1] = current_char;
         }
     }
+
+    if (phrase == NULL) return; // the file might be empty, we can just return since there are no phrases
 
     // we need to do this once more because the last sentence would not be printed
     phrase[phrase_length] = '\0';
