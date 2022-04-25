@@ -29,6 +29,8 @@ void print_phrases(const char* file_path, bool list) {
 
         if (strchr(".!?", current_char)) { // we might reach the end of the file and not have any punctuation
 
+            if (phrase == NULL) continue; // discard multiple delimiters in sequence
+
             phrase[phrase_length] = '\0';
 
             int offset = 0;
