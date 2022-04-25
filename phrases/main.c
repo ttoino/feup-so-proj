@@ -18,20 +18,18 @@ void print_phrases(const char* file_path, bool list) {
 
     int phrase_count = 0, phrase_length = 0;
     char* phrase = NULL;
-    char current_char[2]; // needs to have 2 chars because of \0
+    char current_char;
 
-    while (fread(current_char, sizeof(char), 1, fp) > 0) {
-
-        current_char[1] = '\0';
+    while ((current_char = fgetc(fp)) != EOF) {
 
         if (ferror(fp)) {
             printf("error while reading file '%s'\n", file_path);
             exit(EXIT_FAILURE);
         }
 
-        if (strstr(current_char, "\n"))
+        if (current_char == '\n')
             continue;
-        else if (strstr(current_char, ".") || strstr(current_char, "!") || strstr(current_char, "?") || feof(fp)) { // we might reach the end of the file and not have any punctuation
+        else if (strchr(".!?", current_char)) { // we might reach the end of the file and not have any punctuation
 
             phrase[phrase_length] = '\0';
 
@@ -39,9 +37,9 @@ void print_phrases(const char* file_path, bool list) {
             while (*phrase == ' ') { phrase++; offset++; } // ignore leading whitespace
 
             if (list) 
-                printf("[%d] %s%c\n", ++phrase_count, phrase, current_char[0]);
+                printf("[%d] %s%c\n", ++phrase_count, phrase, current_char);
             else
-                printf("%s%c\n", phrase, current_char[0]);
+                printf("%s%c\n", phrase, current_char);
             
             free(phrase - offset);
             phrase = NULL;
@@ -55,7 +53,7 @@ void print_phrases(const char* file_path, bool list) {
                 exit(EXIT_FAILURE);
             }
 
-            phrase[phrase_length - 1] = current_char[0];
+            phrase[phrase_length - 1] = current_char;
         }
     }
 
@@ -67,10 +65,10 @@ void print_phrases(const char* file_path, bool list) {
     while (*phrase == ' ') { phrase++; offset++; } // ignore leading whitespace
 
     if (list) 
-        printf("[%d] %s%c\n", ++phrase_count, phrase, current_char[0]);
+        printf("[%d] %s\n", ++phrase_count, phrase);
     else
-        printf("%s%c\n", phrase, current_char[0]);
-    
+        puts(phrase);
+
     free(phrase - offset);
 }
 
