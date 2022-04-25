@@ -35,14 +35,15 @@ void print_phrases(const char* file_path, bool list) {
 
             phrase[phrase_length] = '\0';
 
-            while (*phrase == ' ') phrase++; // ignore leading whitespace
+            int offset = 0;
+            while (*phrase == ' ') { phrase++; offset++; } // ignore leading whitespace
 
             if (list) 
                 printf("[%d] %s%c\n", ++phrase_count, phrase, current_char[0]);
             else
                 printf("%s%c\n", phrase, current_char[0]);
             
-            free(phrase);
+            free(phrase - offset);
             phrase = NULL;
             phrase_length = 0;
         } else {
@@ -51,6 +52,20 @@ void print_phrases(const char* file_path, bool list) {
             phrase[phrase_length - 1] = current_char[0];
         }
     }
+
+    // we need to do this once more because the last sentence would not be printed
+
+    phrase[phrase_length] = '\0';
+
+    int offset = 0;
+    while (*phrase == ' ') { phrase++; offset++; } // ignore leading whitespace
+
+    if (list) 
+        printf("[%d] %s%c\n", ++phrase_count, phrase, current_char[0]);
+    else
+        printf("%s%c\n", phrase, current_char[0]);
+    
+    free(phrase - offset);
 }
 
 int main(int argc, char const *argv[]) {
