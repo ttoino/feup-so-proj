@@ -70,6 +70,7 @@ void print_phrases(const char* file_path, bool list) {
         puts(phrase);
 
     free(phrase - offset);
+    fclose(fp);
 }
 
 int main(int argc, char const *argv[]) {
