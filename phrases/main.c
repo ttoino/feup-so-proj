@@ -27,9 +27,7 @@ void print_phrases(const char* file_path, bool list) {
             exit(EXIT_FAILURE);
         }
 
-        if (current_char == '\n')
-            continue;
-        else if (strchr(".!?", current_char)) { // we might reach the end of the file and not have any punctuation
+        if (strchr(".!?", current_char)) { // we might reach the end of the file and not have any punctuation
 
             phrase[phrase_length] = '\0';
 
@@ -53,11 +51,20 @@ void print_phrases(const char* file_path, bool list) {
                 exit(EXIT_FAILURE);
             }
 
+            if (current_char == '\n') current_char = ' ';
+
             phrase[phrase_length - 1] = current_char;
         }
     }
 
     // we need to do this once more because the last sentence would not be printed
+
+    phrase = realloc(phrase, sizeof(char) * ++phrase_length);
+
+    if (!phrase) { // error while trying to allocate more memory
+        puts("error while trying to allocate more memory");
+        exit(EXIT_FAILURE);
+    }
 
     phrase[phrase_length] = '\0';
 
