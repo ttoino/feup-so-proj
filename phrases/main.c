@@ -68,6 +68,8 @@ void print_phrases(const char* file_path, bool list) {
     // we need to do this once more because the last sentence would not be printed
     phrase[phrase_length] = '\0';
 
+    while (phrase[phrase_length-1] == ' ') phrase[--phrase_length] = '\0';
+
     int offset = 0;
     while (*phrase == ' ') { phrase++; offset++; } // ignore leading whitespace
 
