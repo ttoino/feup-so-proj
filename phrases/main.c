@@ -36,10 +36,10 @@ void print_phrases(const char* file_path, bool list) {
             int offset = 0;
             while (*phrase == ' ') { phrase++; offset++; } // ignore leading whitespace
 
+            ++phrase_count;
+
             if (list) 
-                printf("[%d] %s%c\n", ++phrase_count, phrase, current_char);
-            else
-                printf("%s%c\n", phrase, current_char);
+                printf("[%d] %s%c\n", phrase_count, phrase, current_char);
             
             free(phrase - offset);
             phrase = NULL;
@@ -67,10 +67,12 @@ void print_phrases(const char* file_path, bool list) {
     int offset = 0;
     while (*phrase == ' ') { phrase++; offset++; } // ignore leading whitespace
 
+    ++phrase_count;
+
     if (list) 
-        printf("[%d] %s\n", ++phrase_count, phrase);
+        printf("[%d] %s\n", phrase_count, phrase);
     else
-        puts(phrase);
+        printf("%d\n", phrase_count);
 
     free(phrase - offset);
     fclose(fp);
