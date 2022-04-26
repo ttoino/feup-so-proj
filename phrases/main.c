@@ -59,7 +59,11 @@ void print_phrases(const char* file_path, bool list) {
         }
     }
 
-    if (phrase == NULL) return; // the file might be empty, we can just return since there are no phrases
+    if (phrase == NULL) { // the file might be empty or end with a sentence terminator
+        if (!list)
+            printf("%d\n", phrase_count);
+        return;
+    }
 
     // we need to do this once more because the last sentence would not be printed
     phrase[phrase_length] = '\0';
