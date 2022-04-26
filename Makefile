@@ -1,6 +1,6 @@
 # -*- Makefile -*-
 
-CC := gcc
+CC := gcc -Wall -Wextra
 
 all: phrases/phrases addmx/addmx cypher/cypher
 
