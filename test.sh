@@ -55,3 +55,13 @@ expect_error "$p matrix1.error3.txt matrix1.txt"
 expect_error "$p matrix1.txt matrix1.error3.txt"
 
 cd "../.."
+
+p="cypher"
+echo "Testing $p"
+cd "$p/tests" || exit 1
+p="../$p"
+
+expect_val "$p < quote.txt" "quote.cyphered.txt"
+expect_val "$p < quote.cyphered.txt" "quote.txt"
+
+cd "../.."
