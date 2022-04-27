@@ -156,6 +156,7 @@ int main() {
         free(str);
         free(keys);
         free(values);
+        free(buffers);
         close(pipe2[WRITE_END]);
 
         exit(EXIT_SUCCESS);
