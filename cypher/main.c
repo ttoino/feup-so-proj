@@ -82,7 +82,7 @@ int main() {
             values = reallocarray(values, ncyphers, sizeof(char *));
             buffers = reallocarray(buffers, ncyphers, sizeof(char *));
 
-            buffers[ncyphers - 1] = ncyphers;
+            buffers[ncyphers - 1] = buffer;
 
             // Skip leading spaces
             if (*buffer == ' ')
