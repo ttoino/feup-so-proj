@@ -115,6 +115,7 @@ int main() {
             buffer = NULL;
         }
 
+        free(buffer); // getline allocates memory even if it resulted in failure (like no more characters to be read)
         fclose(cypherfile);
 
         size_t size = 0;
