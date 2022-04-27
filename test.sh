@@ -6,14 +6,15 @@ expect_error() {
 
 expect_val() {
     out=$($1 2>/dev/null)
-    expected=$(cat "tests/$2")
+    expected=$(cat "$2")
 
     [ "$out" != "$expected" ] && echo "Unexpected output for '$1'" >&2
 }
 
-p="./phrases"
+p="phrases"
 echo "Testing $p"
-cd "$p" || exit 1
+cd "$p/tests" || exit 1
+p="../$p"
 
 # Invalid arguments
 expect_error "$p"
@@ -25,11 +26,12 @@ expect_error "$p a a a"
 expect_val "$p quote.txt" "quote.out.txt"
 expect_val "$p -l quote.txt" "quote.l.out.txt"
 
-cd ".."
+cd "../.."
 
-p="./addmx"
+p="addmx"
 echo "Testing $p"
-cd "$p" || exit 1
+cd "$p/tests" || exit 1
+p="../$p"
 
 # Invalid arguments
 expect_error "$p"
@@ -52,4 +54,4 @@ expect_error "$p matrix1.txt matrix1.error2.txt"
 expect_error "$p matrix1.error3.txt matrix1.txt"
 expect_error "$p matrix1.txt matrix1.error3.txt"
 
-cd ".."
+cd "../.."
