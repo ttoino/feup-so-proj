@@ -115,6 +115,8 @@ int main() {
             buffer = NULL;
         }
 
+        fclose(cypherfile);
+
         size_t size = 0;
         char *str = calloc(size, sizeof(char));
 
