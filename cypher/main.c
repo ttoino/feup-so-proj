@@ -12,7 +12,7 @@
 
 void error() { exit(EXIT_FAILURE); }
 
-int main(int argc, char const *argv[]) {
+int main() {
     int pipe1[2], pipe2[2];
     pid_t pid;
     char line[LINESIZE];
@@ -73,40 +73,45 @@ int main(int argc, char const *argv[]) {
         size_t ncyphers = 0, buffer_size = 0;
         char **keys = calloc(ncyphers, sizeof(char *));
         char **values = calloc(ncyphers, sizeof(char *));
+        char **buffers = calloc(ncyphers, sizeof(char *));
         char *buffer = NULL;
 
         while (getline(&buffer, &buffer_size, cypherfile) > 0) {
             ++ncyphers;
             keys = reallocarray(keys, ncyphers, sizeof(char *));
             values = reallocarray(values, ncyphers, sizeof(char *));
+            buffers = reallocarray(buffers, ncyphers, sizeof(char *));
 
+            buffers[ncyphers - 1] = ncyphers;
+
+            // Skip leading spaces
+            if (*buffer == ' ')
+                while (*++buffer == ' ')
+                    ;
             keys[ncyphers - 1] = buffer;
 
-            while (*buffer != ' ') {
-                ++buffer;
-
+            while (*++buffer != ' ')
                 if (*buffer == '\0') {
                     fprintf(stderr, "Malformed cypher.txt!\n");
                     kill(getppid(), SIGUSR1);
                     exit(EXIT_FAILURE);
                 }
-            }
-
-            *buffer++ = '\0';
-            values[ncyphers - 1] = buffer;
-
-            while (*buffer != ' ' && *buffer != '\n') {
-                ++buffer;
-
-                if (*buffer == '\0') {
-                    fprintf(stderr, "Malformed cypher.txt!\n");
-                    kill(getppid(), SIGUSR1);
-                    exit(EXIT_FAILURE);
-                }
-            }
 
             *buffer = '\0';
 
+            // Skip leading spaces
+            while (*++buffer == ' ')
+                ;
+            values[ncyphers - 1] = buffer;
+
+            while (*++buffer != ' ' && *buffer != '\n')
+                if (*buffer == '\0') {
+                    fprintf(stderr, "Malformed cypher.txt!\n");
+                    kill(getppid(), SIGUSR1);
+                    exit(EXIT_FAILURE);
+                }
+
+            *buffer = '\0';
             buffer = NULL;
         }
 
@@ -127,21 +132,15 @@ int main(int argc, char const *argv[]) {
         nextchar:
             for (size_t j = 0; j < ncyphers; ++j) {
                 size_t n = strlen(keys[j]);
-                size_t m = strlen(keys[j]);
+                size_t m = strlen(values[j]);
 
-                if (i + n > size)
-                    continue;
-
-                if (strncmp(str + i, keys[j], n) == 0) {
+                if (i + n < size && strncmp(str + i, keys[j], n) == 0) {
                     write(pipe2[WRITE_END], values[j], m);
                     i += n;
                     goto nextchar;
                 }
 
-                if (i + m > size)
-                    continue;
-
-                if (strncmp(str + i, values[j], m) == 0) {
+                if (i + m < size && strncmp(str + i, values[j], m) == 0) {
                     write(pipe2[WRITE_END], keys[j], n);
                     i += m;
                     goto nextchar;
@@ -151,9 +150,8 @@ int main(int argc, char const *argv[]) {
             write(pipe2[WRITE_END], str + i, 1);
         }
 
-        for (size_t j = 0; j < ncyphers; ++j) {
-            free(keys[j]);
-        }
+        for (size_t j = 0; j < ncyphers; ++j)
+            free(buffers[j]);
 
         free(str);
         free(keys);

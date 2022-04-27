@@ -4,8 +4,8 @@ expect_error() {
     $1 2>/dev/null 1>/dev/null && echo "Expected '$1' to generate error" >&2
 }
 
-expect_val() {
-    out=$($1 2>/dev/null)
+expect_value() {
+    out=$(eval "$1 2>/dev/null")
     expected=$(cat "$2")
 
     [ "$out" != "$expected" ] && echo "Unexpected output for '$1'" >&2
@@ -23,8 +23,8 @@ expect_error "$p a a"
 expect_error "$p a a a"
 
 # Working example
-expect_val "$p quote.txt" "quote.out.txt"
-expect_val "$p -l quote.txt" "quote.l.out.txt"
+expect_value "$p quote.txt" "quote.out.txt"
+expect_value "$p -l quote.txt" "quote.l.out.txt"
 
 cd "../.."
 
@@ -40,7 +40,7 @@ expect_error "$p a a"
 expect_error "$p a a a"
 
 # Working example
-expect_val "$p matrix1.txt matrix2.txt" "matrix1+2.txt"
+expect_value "$p matrix1.txt matrix2.txt" "matrix1+2.txt"
 
 # Malformed sizes
 expect_error "$p matrix1.error1.txt matrix1.txt"
@@ -61,7 +61,24 @@ echo "Testing $p"
 cd "$p/tests" || exit 1
 p="../$p"
 
-expect_val "$p < quote.txt" "quote.cyphered.txt"
-expect_val "$p < quote.cyphered.txt" "quote.txt"
+# No cypher.txt
+rm -f "cypher.txt"
+expect_error "$p"
+
+# Empty cypher.txt
+touch "cypher.txt"
+expect_value "$p < quote.txt" "quote.txt"
+
+# Working example
+cat "cypher1.txt" >|"cypher.txt"
+expect_value "$p < quote.txt" "quote.cypher1.txt"
+expect_value "$p < quote.cypher1.txt" "quote.txt"
+
+# Spaces in cypher
+cat "cypher2.txt" >|"cypher.txt"
+expect_value "$p < quote.txt" "quote.cypher2.txt"
+expect_value "$p < quote.cypher2.txt" "quote.txt"
+
+rm -f "cypher.txt"
 
 cd "../.."
