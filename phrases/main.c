@@ -1,81 +1,90 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-void print_usage() {
-    puts("usage: phrases [-l] file");
-}
-
-void print_phrases(const char* file_path, bool list) {
-
-    FILE* fp = fopen(file_path, "r");
+void print_phrases(const char *file_path, bool list) {
+    FILE *fp = fopen(file_path, "r");
 
     if (fp == NULL) {
-        printf("error while opening file '%s'\n", file_path);
+        fprintf(stderr, "Can't open file!\n");
         exit(EXIT_FAILURE);
     }
 
     int phrase_count = 0, phrase_length = 0;
-    char* phrase = NULL;
+    char *phrase = NULL;
     char current_char;
 
     while ((current_char = fgetc(fp)) != EOF) {
-
         if (ferror(fp)) {
-            printf("error while reading file '%s'\n", file_path);
+            fprintf(stderr, "Error while reading file!\n");
             exit(EXIT_FAILURE);
         }
 
         if (strchr(".!?", current_char)) {
-
-            if (phrase == NULL) continue; // discard multiple delimiters in sequence
+            if (phrase == NULL)
+                continue; // discard multiple delimiters in sequence
 
             phrase[phrase_length] = '\0';
 
             int offset = 0;
-            while (*phrase == ' ') { phrase++; offset++; } // ignore leading whitespace
+            while (*phrase == ' ') {
+                phrase++;
+                offset++;
+            } // ignore leading whitespace
 
             ++phrase_count;
 
-            if (list) 
+            if (list)
                 printf("[%d] %s%c\n", phrase_count, phrase, current_char);
-            
+
             free(phrase - offset);
             phrase = NULL;
             phrase_length = 0;
+
         } else {
+            phrase =
+                realloc(phrase, sizeof(char) * ++phrase_length +
+                                    1); // + 1 to account for the eventual \0
 
-            phrase = realloc(phrase, sizeof(char) * ++phrase_length + 1); // + 1 to account for the eventual \0
-
-            if (phrase == NULL) { // error while trying to allocate more memory
-                puts("error while trying to allocate more memory");
+            if (phrase == NULL) {
+                fprintf(stderr,
+                        "Error while trying to allocate more memory!\n");
                 exit(EXIT_FAILURE);
             }
 
-            if (current_char == '\n') current_char = ' ';
+            if (current_char == '\n')
+                current_char = ' ';
 
             phrase[phrase_length - 1] = current_char;
         }
     }
 
-    if (phrase == NULL) { // the file might be empty or end with a sentence terminator
+    // the file might be empty or end with a sentence terminator
+    if (phrase == NULL) {
         if (!list)
             printf("%d\n", phrase_count);
         return;
     }
 
-    // we need to do this once more because the last sentence would not be printed
+    // we need to do this once more because the last sentence would not be
+    // printed
     phrase[phrase_length] = '\0';
 
-    while (phrase[phrase_length-1] == ' ') phrase[--phrase_length] = '\0';
+    // Ignore trailing whitespace
+    while (phrase[phrase_length - 1] == ' ')
+        phrase[--phrase_length] = '\0';
 
+    // ignore leading whitespace
     int offset = 0;
-    while (*phrase == ' ') { phrase++; offset++; } // ignore leading whitespace
+    while (*phrase == ' ') {
+        phrase++;
+        offset++;
+    }
 
     ++phrase_count;
 
-    if (list) 
+    if (list)
         printf("[%d] %s\n", phrase_count, phrase);
     else
         printf("%d\n", phrase_count);
@@ -85,48 +94,24 @@ void print_phrases(const char* file_path, bool list) {
 }
 
 int main(int argc, char const *argv[]) {
+    if (argc != 2 && argc != 3) {
+        fprintf(stderr, "Usage: %s [-l] file\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
 
-    switch (argc) {
-        case 1: { // print usage
-            print_usage();
-            exit(EXIT_SUCCESS);
-        }
-        case 2: {
-            if (argv[1][0] == '-') {
-                puts("must supply a file name");  
-                print_usage();              
-                exit(EXIT_FAILURE);
-            } else { // should be a file path, process it
-                print_phrases(argv[1], false);
-            }
-            break;
-        }
-        case 3: {
+    const char *filename = argv[1];
+    bool list = false;
 
-            if (argv[1][0] == '-') { // first arg must be the option
-                if (strcmp(argv[1], "-l")) { // option must only be '-l'
-                    printf("unknown option: %s\n", argv[1]);
-                    print_usage();
-                    exit(EXIT_FAILURE);
-                }
-
-                /* option and file */
-                print_phrases(argv[2], true);
-
-            } else {
-                printf("invalid argument: %s\n", argv[1]);     
-                print_usage();           
-                exit(EXIT_FAILURE);
-            }
-
-            break;
-        }
-        default: {
-            puts("invalid number of arguments");
-            print_usage();
+    if ((list = argc == 3)) {
+        if (strcmp(argv[1], "-l") != 0) {
+            fprintf(stderr, "Usage: %s [-l] file\n", argv[0]);
             exit(EXIT_FAILURE);
         }
-    };
+
+        filename = argv[2];
+    }
+
+    print_phrases(filename, list);
 
     return EXIT_SUCCESS;
 }

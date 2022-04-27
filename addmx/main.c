@@ -66,7 +66,7 @@ void readMatrix(unsigned long *matrix, unsigned long n, unsigned long m,
 int main(int argc, char *argv[]) {
     // Check number of arguments
     if (argc != 3) {
-        fprintf(stderr, "Requires exactly two arguments!\n");
+        fprintf(stderr, "Usage: %s file1 file2\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 

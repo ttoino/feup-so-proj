@@ -15,7 +15,13 @@ p="./phrases"
 echo "Testing $p"
 cd "$p" || exit 1
 
-check_val "$p" "tests/noargs.out.txt"
+# Invalid arguments
+check_error "$p"
+check_error "$p a"
+check_error "$p a a"
+check_error "$p a a a"
+
+# Working example
 check_val "$p tests/quote.txt" "tests/quote.out.txt"
 check_val "$p -l tests/quote.txt" "tests/quote.l.out.txt"
 
@@ -25,11 +31,13 @@ p="./addmx"
 echo "Testing $p"
 cd "$p" || exit 1
 
+# Invalid arguments
 check_error "$p"
 check_error "$p a"
 check_error "$p a a b"
 check_error "$p a a"
 
+# Working example
 check_val "$p tests/matrix1.txt tests/matrix2.txt" "tests/matrix1+2.txt"
 
 check_error "$p tests/matrix1.error1.txt tests/matrix1.txt"
