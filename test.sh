@@ -79,6 +79,10 @@ cat "cypher2.txt" >|"cypher.txt"
 expect_value "$p < quote.txt" "quote.cypher2.txt"
 expect_value "$p < quote.cypher2.txt" "quote.txt"
 
+# Broken cypher
+cat "cypher3.txt" >|"cypher.txt"
+expect_error "$p < quote.txt"
+
 rm -f "cypher.txt"
 
 cd "../.."
