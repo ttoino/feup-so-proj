@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+
+#define CMD_USAGE "Usage: %s [-l] file\n"
 
 void print_phrases(const char *file_path, bool list) {
     FILE *fp = fopen(file_path, "r");
@@ -86,23 +89,29 @@ void print_phrases(const char *file_path, bool list) {
     fclose(fp);
 }
 
-int main(int argc, char const *argv[]) {
+int main(int argc, char *argv[]) {
     if (argc != 2 && argc != 3) {
-        fprintf(stderr, "Usage: %s [-l] file\n", argv[0]);
+        fprintf(stderr, CMD_USAGE, argv[0]);
         exit(EXIT_FAILURE);
     }
 
     const char *filename = argv[1];
     bool list = false;
 
-    if ((list = argc == 3)) {
-        if (strcmp(argv[1], "-l") != 0) {
-            fprintf(stderr, "Usage: %s [-l] file\n", argv[0]);
-            exit(EXIT_FAILURE);
-        }
+    int opt;
 
-        filename = argv[2];
+    while ((opt = getopt(argc, argv, "l")) != -1) {
+        switch(opt) {
+            case 'l':
+                list = true;
+                break;
+            default:
+                fprintf(stderr, CMD_USAGE, argv[0]);
+                exit(EXIT_FAILURE);
+        }
     }
+
+    filename = argv[optind];
 
     print_phrases(filename, list);
 
