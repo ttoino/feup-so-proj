@@ -111,8 +111,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    for (int i = optind; i < argc; i++)
-        filename = argv[i];
+    filename = argv[optind];
 
     print_phrases(filename, list);
 
