@@ -1,19 +1,15 @@
-# feup-so-proj
+# FEUP-SO-PROJ
 
-# Operating Systems Project
-
+Final project for the SO course unit at FEUP.
 
 This repository holds the files submitted for the 1st SO project.
 
----
+## Unit info
 
-## Project group:
-- up202007865, [Nuno Pereira](https://github.com/Naapperas)<br>
-- up202004714, [Pedro Ramalho](https://github.com/pedronunes19)<br>
-- up202004724, [Guilherme Sequeira](https://github.com/Cavaleiro132)<br>
-- up202004724, [João Pereira](https://github.com/Cavaleiro132)<br>
-
-## Project grade: N.A./20
+* **Name**: Sistemas Operativos (Operating Systems)
+* **Date**: Year 2, Semester 2, 2021/22
+* **See also**: [feup-so](https://github.com/ttoino/feup-so)
+* [**More info**](https://sigarra.up.pt/feup/ucurr_geral.ficha_uc_view?pv_ocorrencia_id=484378)
 
 ## Disclaimer
 
